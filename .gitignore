@@ -4,3 +4,5 @@ plots/
 data/
 .Rhistory
 .Rproj.user/
+./data/
+./plots/
