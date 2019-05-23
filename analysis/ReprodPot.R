@@ -84,7 +84,7 @@ lm_eqn <- function(fec2){
 
 
 ggplot(fec2,aes(x=LC,y=W))+
-  geom_smooth(method = "lm",colour="black")+geom_point()+
+  geom_smooth(method = "lm",colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
   geom_text(x = 22, y = 14, label = lm_eqn(fec2), parse = TRUE)+
   ylab("Weight (g)")+xlab("LC (mm)")+
