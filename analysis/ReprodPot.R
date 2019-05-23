@@ -19,17 +19,17 @@ summary(calib)
 lm_eqn <- function(calib.fec){
   m <- lm(eggs~DryW,data=calib.fec);
   eq <- substitute(italic(E) == a + b %.% italic(DW)*","~~italic(r)^2~"="~r2, 
-                   list(a = format(coef(m)[1], digits = 2),
-                        b = format(coef(m)[2], digits = 2),
+                   list(a = as.numeric(format(coef(m)[1], digits = 2)),
+                        b = as.numeric(format(coef(m)[2], digits = 2)),
                         r2 = format(summary(m)$r.squared, digits = 3)))
   as.character(as.expression(eq));
 }
 
 
 ggplot(calib.fec,aes(x=DryW,y=eggs))+
-  geom_smooth(method = "lm",colour="black")+geom_point()+
+  geom_smooth(method = "lm",colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
-  geom_text(x = 0.25, y = 1000, label = lm_eqn(calib.fec), parse = TRUE)+
+  geom_text(x = 0.25, y = 1700, label = lm_eqn(calib.fec), parse = TRUE)+
   ylab("Number of Eggs")+xlab("Dry Weight (g)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
@@ -49,17 +49,17 @@ summary(mod.fec)
 lm_eqn <- function(fec2){
   m <- lm(eggs~LC,data=fec2);
   eq <- substitute(italic(E) == a + b %.% italic(LC)*","~~italic(r)^2~"="~r2, 
-                   list(a = format(coef(m)[1], digits = 2),
-                        b = format(coef(m)[2], digits = 2),
+                   list(a = as.numeric(format(coef(m)[1], digits = 2)),
+                        b = as.numeric(format(coef(m)[2], digits = 2)),
                         r2 = format(summary(m)$r.squared, digits = 3)))
   as.character(as.expression(eq));
 }
 
 
 ggplot(fec2,aes(x=LC,y=eggs))+
-  geom_smooth(method = "lm",colour="black")+geom_point()+
+  geom_smooth(method = "lm",colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
-  geom_text(x = 23, y = 1000, label = lm_eqn(fec2), parse = TRUE)+
+  geom_text(x = 22, y = 1750, label = lm_eqn(fec2), parse = TRUE)+
   ylab("Number of Eggs")+xlab("LC (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
@@ -76,8 +76,8 @@ summary(mod.lw)
 lm_eqn <- function(fec2){
   m <- lm(W~LC,data=fec2,na.action=na.omit);
   eq <- substitute(italic(W) == a + b %.% italic(LC)*","~~italic(r)^2~"="~r2, 
-                   list(a = format(coef(m)[1], digits = 2),
-                        b = format(coef(m)[2], digits = 2),
+                   list(a = as.numeric(format(coef(m)[1], digits = 2)),
+                        b = as.numeric(format(coef(m)[2], digits = 2)),
                         r2 = format(summary(m)$r.squared, digits = 3)))
   as.character(as.expression(eq));
 }
@@ -86,13 +86,13 @@ lm_eqn <- function(fec2){
 ggplot(fec2,aes(x=LC,y=W))+
   geom_smooth(method = "lm",colour="black")+geom_point()+
   theme_bw()+
-  geom_text(x = 23, y = 10, label = lm_eqn(fec2), parse = TRUE)+
+  geom_text(x = 22, y = 14, label = lm_eqn(fec2), parse = TRUE)+
   ylab("Weight (g)")+xlab("LC (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
 
-ggsave("plots/LW.png", width = 20, height = 12, units = "cm")
+ggsave("plots/LW2.png", width = 20, height = 12, units = "cm")
 
 
 #estimate proportion at size
