@@ -67,14 +67,44 @@ ggplot(fec2,aes(x=LC,y=eggs))+
 
 ggsave("plots/fec.png", width = 20, height = 12, units = "cm")
 
-#length weight relation
+#fecundity excluding first site
+fec3<-subset(fec2,Shrimp>68)
+
 str(fec2)
-mod.lw<-lm(W~LC,data=fec2,na.action=na.omit)
+mod.fec2<-lm(eggs~LC,data=fec3)
+
+summary(mod.fec2)
+
+lm_eqn <- function(fec3){
+  m <- lm(eggs~LC,data=fec3);
+  eq <- substitute(italic(E) == a + b %.% italic(LC)*","~~italic(r)^2~"="~r2, 
+                   list(a = as.numeric(format(coef(m)[1], digits = 2)),
+                        b = as.numeric(format(coef(m)[2], digits = 2)),
+                        r2 = format(summary(m)$r.squared, digits = 3)))
+  as.character(as.expression(eq));
+}
+
+
+ggplot(fec3,aes(x=LC,y=eggs))+
+  geom_smooth(method = "lm",colour="blue")+geom_point(size=2,alpha=0.6)+
+  theme_bw()+
+  geom_text(x = 22, y = 1750, label = lm_eqn(fec3), parse = TRUE)+
+  ylab("Number of Eggs")+xlab("LC (mm)")+
+  scale_x_continuous(expand = c(0,0))+
+  theme(text = element_text(size=16),panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
+
+ggsave("plots/fec_excluding1site.png", width = 20, height = 12, units = "cm")
+
+
+#length weight relation
+str(fec3)
+mod.lw<-lm(W~LC,data=fec3,na.action=na.omit)
 
 summary(mod.lw)
 
-lm_eqn <- function(fec2){
-  m <- lm(W~LC,data=fec2,na.action=na.omit);
+lm_eqn <- function(fec3){
+  m <- lm(W~LC,data=fec3,na.action=na.omit);
   eq <- substitute(italic(W) == a + b %.% italic(LC)*","~~italic(r)^2~"="~r2, 
                    list(a = as.numeric(format(coef(m)[1], digits = 2)),
                         b = as.numeric(format(coef(m)[2], digits = 2)),
@@ -83,16 +113,16 @@ lm_eqn <- function(fec2){
 }
 
 
-ggplot(fec2,aes(x=LC,y=W))+
+ggplot(fec3,aes(x=LC,y=W))+
   geom_smooth(method = "lm",colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
-  geom_text(x = 22, y = 14, label = lm_eqn(fec2), parse = TRUE)+
+  geom_text(x = 22, y = 14, label = lm_eqn(fec3), parse = TRUE)+
   ylab("Weight (g)")+xlab("LC (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
 
-ggsave("plots/LW2.png", width = 20, height = 12, units = "cm")
+ggsave("plots/LW.png", width = 20, height = 12, units = "cm")
 
 
 #estimate proportion at size
@@ -116,7 +146,7 @@ prop.size$P<-transition
 WatL<-predict(mod.lw,prop.size, type="response")
 prop.size$WatL<-WatL
 prop.size$rel.ssb<-prop.size$prop*prop.size$P*prop.size$WatL
-Fec<-predict(mod.fec,prop.size, type="response")
+Fec<-predict(mod.fec2,prop.size, type="response")
 prop.size$Fec<-Fec
 prop.size$EP<-prop.size$prop*prop.size$P*prop.size$Fec
 
