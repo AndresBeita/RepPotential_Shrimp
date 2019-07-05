@@ -137,12 +137,21 @@ dd
 #########################################
 ######## GLM transition #################
 #########################################
+str(data2)
 
-data3 <- subset(data2,year %in% 1996:2016)
+data3 <- data2 %>%
+  subset(year %in% 1996:2016) %>%
+  subset(Id == "6")
 
 options(na.action = "na.fail")
-l_mat_linear2 = glm(sex.binom ~ size_mm +year*Id,#+Sal.all+Temp.all+dens.year,
+l_mat_linear2 = glm(sex.binom ~ size_mm +year,#*Id,#+Sal.all+Temp.all+dens.year,
                     family=binomial(link = "logit"),
                     data = data3)
 summary(l_mat_linear2)
 
+install.packages("glmmTMB")
+library(glmmTMB)
+
+prueba<-glmmTMB(sex.binom ~ size_mm +year +ar1(1/year),
+             family=binomial,
+             data = data3)
