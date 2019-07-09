@@ -214,7 +214,7 @@ plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP/1000000000, type="l"
      xaxt="n",yaxt="n", col = "red",lty=2,
      ylab = "", xlab = "",lwd=2,cex.axis=1.5)
 axis(side = 4,cex.axis=1.5)
-mtext(expression(TEP (x10^9)), side = 4, line = 3, cex=1.5)
+mtext(expression(TEP (x10^11)), side = 4, line = 3, cex=1.5)
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2/1000000000, type="l",
      xaxt="n",yaxt="n", col = "blue",lty=2,
@@ -252,6 +252,50 @@ ggplot(data.frame(x=c(19, 30)), aes(x=x)) +
         panel.grid.minor = element_blank())
 
 ggsave("plots/comp_fec.png", width = 20, height = 12, units = "cm")
+
+#reference points
+
+install.packages("EnvStats")
+library(EnvStats)
+refpoin<-subset(rep.pot,year %in% 1996:2003)
+#SSB
+gmssb<- geoMean(refpoin$SSB)
+USRssb<- gmssb*0.8
+LRPssb<- gmssb*0.3
+
+#TEP1978
+gm<- geoMean(refpoin$TEP2)
+USRtep1978<- gm*0.8
+LRPtep1978<- gm*0.3
+
+#TEP2018
+gm<- geoMean(refpoin$TEP)
+USRtep2018<- gm*0.8
+LRPtep2018<- gm*0.3
+
+ggplot(rep.pot,aes(TEP,SSB))+
+  geom_point(size=2,alpha=0.5)+
+  theme_bw()+
+  geom_hline(yintercept = USRssb, colour="green")+
+  geom_hline(yintercept = LRPssb, colour="red")+
+  geom_vline(xintercept = USRtep2018, colour="green")+
+  geom_vline(xintercept = LRPtep2018, colour="red")+
+  theme(text = element_text(size=16),panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
+
+ggsave("plots/refpoint2018.png", width = 20, height = 12, units = "cm")
+
+ggplot(rep.pot,aes(TEP2,SSB))+
+  geom_point(size=2,alpha=0.5)+
+  theme_bw()+
+  geom_hline(yintercept = USRssb, colour="green")+
+  geom_hline(yintercept = LRPssb, colour="red")+
+  geom_vline(xintercept = USRtep1978, colour="green")+
+  geom_vline(xintercept = LRPtep1978, colour="red")+
+  theme(text = element_text(size=16),panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
+
+ggsave("plots/refpoint1978.png", width = 20, height = 12, units = "cm")
 
 
 #relative
@@ -304,16 +348,16 @@ str(prop.size)
 #jpeg("plots/ReprodPotential.png", width = 600, height = 350)
 tiff("plots/RelativeReprodPotential.tiff", width = 9, height = 5, units = 'in', res = 300)
 par(mar = c(5, 5, 3, 5))
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/1000000000, type="l",
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB, type="l",
      xlab="Year",ylab="Relative SSB", col = "black",lwd=2,cex.lab=1.5,cex.axis=1.5)
 par(new = TRUE)
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP/1000000000, type="l",
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP, type="l",
      xaxt="n",yaxt="n", col = "red",lty=2,
      ylab = "", xlab = "",lwd=2,cex.axis=1.5)
 axis(side = 4,cex.axis=1.5)
-mtext(expression(TEP (x10^9)), side = 4, line = 3, cex=1.5)
+mtext("Relative EP", side = 4, line = 3, cex=1.5)
 par(new = TRUE)
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2/1000000000, type="l",
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2, type="l",
      xaxt="n",yaxt="n", col = "blue",lty=2,
      ylab = "", xlab = "",lwd=2)
 legend("bottomright", c("SSB","EP 1974", "EP 2018"),
@@ -321,4 +365,8 @@ legend("bottomright", c("SSB","EP 1974", "EP 2018"),
        cex = 1.5,lwd=2,bty="n")
 
 dev.off()
+
+rep.pot$dif<-rep.pot$TEP2-rep.pot$TEP
+
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$dif, type="l")
 
