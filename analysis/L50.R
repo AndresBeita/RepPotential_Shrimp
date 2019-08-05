@@ -148,10 +148,3 @@ l_mat_linear2 = glm(sex.binom ~ size_mm +year,#*Id,#+Sal.all+Temp.all+dens.year,
                     family=binomial(link = "logit"),
                     data = data3)
 summary(l_mat_linear2)
-
-install.packages("glmmTMB")
-library(glmmTMB)
-
-prueba<-glmmTMB(sex.binom ~ size_mm +year +ar1(1/year),
-             family=binomial,
-             data = data3)

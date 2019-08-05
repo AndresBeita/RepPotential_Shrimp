@@ -43,6 +43,7 @@ eggs<-predict(calib,fec)
 fec2<-cbind(fec,eggs)
 
 str(fec2)
+#subset(fec2,is.nan(eggs))
 mod.fec<-lm(log(eggs)~log(LC),data=fec2)
 
 summary(mod.fec)
@@ -74,7 +75,10 @@ fec3<-subset(fec2,Shrimp>68)
 str(fec2)
 mod.fec2<-lm(log10(eggs)~log10(LC),data=fec3)
 
+
 summary(mod.fec2)
+a<-10^mod.fec2$coefficients[1]
+b<-mod.fec2$coefficients[2]
 
 lm_eqn <- function(fec3){
   m <- lm(log10(eggs)~log10(LC),data=fec3);
@@ -86,16 +90,16 @@ lm_eqn <- function(fec3){
 }
 
 
-ggplot(fec3,aes(x=log10(LC),y=log10(eggs)))+
-  geom_smooth(method = "lm",colour="blue")+geom_point(size=2,alpha=0.6)+
+ggplot(fec3,aes(x=LC,y=eggs))+
+  geom_smooth(method = "lm",formula= y~I(a*(x^b)), colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
-  geom_text(x = 1.35, y = 3.25, label = lm_eqn(fec3), parse = TRUE)+
-  ylab("log10(Number of Eggs)")+xlab("log10(LC) (mm)")+
+  geom_text(x = 22.5, y = 1820, label = lm_eqn(fec3), parse = TRUE)+
+  ylab("Number of Eggs")+xlab("LC (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
 
-ggsave("plots/fec_excluding1sitelog.png", width = 20, height = 12, units = "cm")
+ggsave("plots/fecundityDef.png", width = 20, height = 12, units = "cm")
 
 
 #length weight relation
@@ -103,6 +107,8 @@ str(fec3)
 mod.lw<-lm(log10(W)~log10(LC),data=fec3,na.action=na.omit)
 
 summary(mod.lw)
+a<-10^mod.lw$coefficients[1]
+b<-mod.lw$coefficients[2]
 
 lm_eqn <- function(fec3){
   m <- lm(log10(W)~log10(LC),data=fec3,na.action=na.omit);
@@ -114,16 +120,16 @@ lm_eqn <- function(fec3){
 }
 
 
-ggplot(fec3,aes(x=log10(LC),y=log10(W)))+
-  geom_smooth(method = "lm",colour="blue")+geom_point(size=2,alpha=0.6)+
+ggplot(fec3,aes(x=LC,y=W))+
+  geom_smooth(method = "lm",formula= y~I(a*(x^b)),colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
-  geom_text(x = 1.34, y = 1.1, label = lm_eqn(fec3), parse = TRUE)+
-  ylab("Log10(Weight) (g)")+xlab("log10(LC) (mm)")+
+  geom_text(x = 22.5, y = 14.3, label = lm_eqn(fec3), parse = TRUE)+
+  ylab("Weight (g)")+xlab("LC (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
 
-ggsave("plots/LW_log.png", width = 20, height = 12, units = "cm")
+ggsave("plots/LW_def.png", width = 20, height = 12, units = "cm")
 
 
 #estimate proportion at size
@@ -238,24 +244,53 @@ legend("topleft", c("1974", "2018"),
 summary(mod.fec2)
 
 fec2018<-function(x){
-  log10_res<-2.9584*log10(x)-1.0371
+  log10_res<-mod.fec2$coefficients[2]*log10(x)+mod.fec2$coefficients[1]
   res<-10^log10_res
   res
 }
 
+summary(mod.fec2)
+a<-10^mod.fec2$coefficients[1]
+b<-mod.fec2$coefficients[2]
+
+db<-crossing(LC=seq(19,30,by=0.1))
+eggs<-predict(mod.fec2,db)
+preds <- predict(mod.fec2, newdata = db, type = "response", se.fit = TRUE)
+critval <- 1.96 ## approx 95% CI
+upr <- 10^(preds$fit + (critval * preds$se.fit))
+lwr <- 10^(preds$fit - (critval * preds$se.fit))
+fit <- 10^(preds$fit)
+dat.fec<-data.frame(LC=db$LC,eggs=fit,upr=upr,lwr=lwr)
+
+ggplot(dat.fec,aes(x=LC,y=eggs))+
+  geom_line(linetype = "dashed",colour="blue", size=1)+
+  geom_ribbon(aes(ymin=lwr, ymax=upr, x=LC), fill = "blue", alpha = 0.3)+
+  stat_function(fun=fec1974, geom="line",linetype = "dashed",colour="red", size=1)+
+  xlab("Size (mm)") + ylab("Number of eggs")+
+  theme_bw()+
+  scale_x_continuous(expand = c(0,0))+
+  theme(text = element_text(size=20),panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())+
+  geom_text(x = 28, y = 1300, label = "2018",colour="blue", parse = TRUE)+
+  geom_text(x = 25, y = 1750, label = "1978",colour="red", parse = TRUE)
+  
+ggsave("plots/comp_fec.png", width = 20, height = 12, units = "cm") 
+  
+
 ggplot(data.frame(x=c(19, 30)), aes(x=x)) + 
-  stat_function(fun=fec2018, geom="line",linetype = "dashed",colour="blue", size=1) + 
+  stat_function(fun=fec2018, geom="line",linetype = "dashed",colour="blue", size=1) +
+  #geom_smooth(,method = "lm",formula= y~I(a*(x^b)),colour="blue",linetype = "dashed")+
   stat_function(fun=fec1974, geom="line",linetype = "dashed",colour="red", size=1) +
   xlab("Size (mm)") + ylab("Number of eggs")+
   theme_bw()+
   theme(text = element_text(size=20),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
 
-ggsave("plots/comp_fec.png", width = 20, height = 12, units = "cm")
+
 
 #reference points
 
-install.packages("EnvStats")
+#install.packages("EnvStats")
 library(EnvStats)
 refpoin<-subset(rep.pot,year %in% 1996:2003)
 #SSB
