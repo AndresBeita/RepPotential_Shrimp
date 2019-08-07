@@ -17,6 +17,7 @@ str(calib.fec)
 calib<-lm(eggs~DryW,data=calib.fec)
 calib
 summary(calib)
+confint(calib)
 
 lm_eqn <- function(calib.fec){
   m <- lm(eggs~DryW,data=calib.fec);
@@ -48,6 +49,7 @@ str(fec2)
 mod.fec<-lm(log(eggs)~log(LC),data=fec2)
 
 summary(mod.fec)
+confint(mod.fec)
 
 lm_eqn <- function(fec2){
   m <- lm(eggs~LC,data=fec2);
@@ -78,12 +80,14 @@ mod.fec2<-lm(log10(eggs)~log10(LC),data=fec3)
 
 
 summary(mod.fec2)
+confint(mod.fec2)
+
 a<-10^mod.fec2$coefficients[1]
 b<-mod.fec2$coefficients[2]
 
 lm_eqn <- function(fec3){
   m <- lm(log10(eggs)~log10(LC),data=fec3);
-  eq <- substitute(italic(Log[10](E)) == a + b %.% italic(Log[10](LC))*","~~italic(r)^2~"="~r2, 
+  eq <- substitute(italic(Log[10](E)) == a + b %.% italic(Log[10](CL))*","~~italic(r)^2~"="~r2, 
                    list(a = as.numeric(format(coef(m)[1], digits = 3)),
                         b = as.numeric(format(coef(m)[2], digits = 3)),
                         r2 = format(summary(m)$r.squared, digits = 3)))
@@ -108,12 +112,14 @@ str(fec3)
 mod.lw<-lm(log10(W)~log10(LC),data=fec3,na.action=na.omit)
 
 summary(mod.lw)
+confint(mod.lw)
+
 a<-10^mod.lw$coefficients[1]
 b<-mod.lw$coefficients[2]
 
 lm_eqn <- function(fec3){
   m <- lm(log10(W)~log10(LC),data=fec3,na.action=na.omit);
-  eq <- substitute(italic(log[10](W)) == a + b %.% italic(log[10](LC))*","~~italic(r)^2~"="~r2, 
+  eq <- substitute(italic(log[10](W)) == a + b %.% italic(log[10](CL))*","~~italic(r)^2~"="~r2, 
                    list(a = as.numeric(format(coef(m)[1], digits = 2)),
                         b = as.numeric(format(coef(m)[2], digits = 2)),
                         r2 = format(summary(m)$r.squared, digits = 3)))
@@ -259,7 +265,7 @@ gm<- geoMean(refpoin$TEP)
 USRtep2018<- gm*0.8
 LRPtep2018<- gm*0.3
 
-ggplot(rep.pot,aes(TEP/100000000000,SSB/1000000000))+
+rp.18 <- ggplot(rep.pot,aes(TEP/100000000000,SSB/1000000000))+
   geom_point(size=2,alpha=0.5)+
   theme_bw()+
   geom_hline(yintercept = USRssb/1000000000, colour="green")+
@@ -270,9 +276,11 @@ ggplot(rep.pot,aes(TEP/100000000000,SSB/1000000000))+
         panel.grid.minor = element_blank())+
   ylab(expression("SSB "(x10^9)))+xlab(expression("TEP "(x10^11)))
 
+rp.18
+
 ggsave("plots/refpoint2018.png", width = 20, height = 12, units = "cm")
 
-ggplot(rep.pot,aes(TEP2/100000000000,SSB/1000000000))+
+rp.78 <- ggplot(rep.pot,aes(TEP2/100000000000,SSB/1000000000))+
   geom_point(size=2,alpha=0.5)+
   theme_bw()+
   geom_hline(yintercept = USRssb/1000000000, colour="green")+
@@ -282,6 +290,8 @@ ggplot(rep.pot,aes(TEP2/100000000000,SSB/1000000000))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())+
   ylab(expression("SSB "(x10^9)))+xlab(expression("TEP "(x10^11)))
+
+rp.78
 
 ggsave("plots/refpoint1978.png", width = 20, height = 12, units = "cm")
 
@@ -380,7 +390,7 @@ gmssb.2<- geoMean(refpoin2$SSB.2)
 USRssb.2<- gmssb.2*0.8
 LRPssb.2<- gmssb.2*0.3
 
-ggplot(rep.pot,aes(SSB/1000000000,SSB.2/1000000000))+
+rp.ssb <- ggplot(rep.pot,aes(SSB/1000000000,SSB.2/1000000000))+
   geom_point(size=2,alpha=0.5)+
   theme_bw()+
   geom_hline(yintercept = USRssb.2/1000000000, colour="green")+
@@ -389,9 +399,24 @@ ggplot(rep.pot,aes(SSB/1000000000,SSB.2/1000000000))+
   geom_vline(xintercept = LRPssb/1000000000, colour="red")+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())+
-  ylab(expression("SSB observer L50 "(x10^9)))+xlab(expression("SSB survey L50 "(x10^9)))
+  ylab(expression("SSB"[o] (x10^9)))+xlab(expression("SSB"[s] (x10^9)))
+
+rp.ssb
 
 ggsave("plots/refpointSSB_datatype.png", width = 20, height = 12, units = "cm")
+
+ggarrange(rp.78,rp.18,rp.ssb,labels=c("A","B","C"),ncol = 1, nrow=3)
+
+ggsave("plots/refpointall1col.png", width = 13, height = 24, units = "cm")
+
+ggarrange(rp.78,rp.18,rp.ssb,labels=c("A","B","C"))
+ggsave("plots/refpointall2col.png", width = 30, height = 21, units = "cm")
+
+ggarrange(rp.18,rp.ssb,labels=c("A","B"),ncol = 1, nrow=2)
+ggsave("plots/refpoint2018_ssb.png", width = 17, height = 22, units = "cm")
+
+ggarrange(rp.78,rp.18,labels=c("A","B"),ncol = 1, nrow=2)
+ggsave("plots/refpoint1978_2018.png", width = 17, height = 22, units = "cm")
 
 ##################################################
 
