@@ -99,7 +99,7 @@ ggplot(fec3,aes(x=LC,y=eggs))+
   geom_smooth(method = "lm",formula= y~I(a*(x^b)), colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
   geom_text(x = 22.5, y = 1820, label = lm_eqn(fec3), parse = TRUE)+
-  ylab("Number of Eggs")+xlab("LC (mm)")+
+  ylab("Number of Eggs")+xlab("CL (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
@@ -131,7 +131,7 @@ ggplot(fec3,aes(x=LC,y=W))+
   geom_smooth(method = "lm",formula= y~I(a*(x^b)),colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
   geom_text(x = 22.5, y = 14.3, label = lm_eqn(fec3), parse = TRUE)+
-  ylab("Weight (g)")+xlab("LC (mm)")+
+  ylab("Weight (g)")+xlab("CL (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
@@ -366,6 +366,115 @@ legend("topright", c("SSB","TEP 1974", "TEP 2018"),
        cex = 1.5,lwd=2,bty="n")
 
 dev.off()
+
+tiff("plots/ReprodPotential_obser_Surv.tiff", width = 10, height = 6, units = 'in', res = 300)
+par(mar = c(5, 5, 3, 5))
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB.2/1000000000, type="l",
+     xlab="Year",ylab=expression(SSB (x10^9)), col = "black",lwd=2,cex.lab=1.5,cex.axis=1.5,lty=2)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/1000000000, type="l",
+     xlab="Year",ylab=expression(SSB (x10^9)), col = "black",lwd=2,cex.lab=1.5,cex.axis=1.5,lty=1,
+     xaxt="n",yaxt="n")
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP.2/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "red",lty=2,
+     ylab = "", xlab = "",lwd=2,cex.axis=1.5)
+axis(side = 4,cex.axis=1.5)
+mtext(expression(TEP (x10^11)), side = 4, line = 3, cex=1.5)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "red",lty=1,
+     ylab = "", xlab = "",lwd=2,cex.axis=1.5)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2.2/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "blue",lty=2,
+     ylab = "", xlab = "",lwd=2)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "blue",lty=1,
+     ylab = "", xlab = "",lwd=2)
+legend("topright", c(expression(SSB[o]),expression(SSB[s]),expression(TEP[o]-1978),expression(TEP[s]-1978),
+                     expression(TEP[o]-2018),expression(TEP[s]-2018)),
+       col = c("black","black", "blue", "blue", "red", "red"), lty = c(2,1,2,1,2,1), 
+       cex = 1.3,lwd=2,bty="n")
+
+dev.off()
+
+
+tiff("plots/ReprodPotential_allc.tiff", width = 10, height = 6, units = 'in', res = 300)
+par(mfrow=c(2,2),mar = c(3.5, 4, 1, 4))
+#par(mar = c(5, 5, 3, 5))
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB.2/1000000000, type="l",
+     ylab = "", xlab = "", col = "black",lwd=2,cex.lab=1,cex.axis=1,lty=2)
+#axis(side = 1,cex.axis=1)
+mtext("Year", side = 1, line = 2.2, cex=1)
+#axis(side = 2,cex.axis=1)
+mtext(expression(SSB (x10^9)), side = 2, line = 2, cex=1)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/1000000000, type="l",
+     xlab="",ylab="", col = "black",lwd=2,cex.lab=1,cex.axis=1,lty=1,
+     xaxt="n",yaxt="n")
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP.2/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "red",lty=2,
+     ylab = "", xlab = "",lwd=2,cex.axis=1)
+axis(side = 4,cex.axis=1)
+mtext(expression(TEP (x10^11)), side = 4, line = 2.6, cex=1)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "red",lty=1,
+     ylab = "", xlab = "",lwd=2,cex.axis=1)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2.2/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "blue",lty=2,
+     ylab = "", xlab = "",lwd=2)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "blue",lty=1,
+     ylab = "", xlab = "",lwd=2)
+
+#par(mar = c(5, 5, 3, 5))
+
+
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB.2/1000000000, type="l",
+     xlab="",ylab="", col = "black",lwd=2,cex.lab=1,cex.axis=1,lty=2)
+mtext("Year", side = 1, line = 2.2, cex=1)
+mtext(expression(SSB (x10^9)), side = 2, line = 2, cex=1)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP.2/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "red",lty=2,
+     ylab = "", xlab = "",lwd=2,cex.axis=1)
+axis(side = 4,cex.axis=1)
+mtext(expression(TEP (x10^11)), side = 4, line = 3, cex=1)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2.2/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "blue",lty=2,
+     ylab = "", xlab = "",lwd=2)
+
+
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/1000000000, type="l",
+     xlab="",ylab="", col = "black",lwd=2,cex.lab=1,cex.axis=1)
+mtext("Year", side = 1, line = 2.2, cex=1)
+mtext(expression(SSB (x10^9)), side = 2, line = 2, cex=1)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "red",lty=1,
+     ylab = "", xlab = "",lwd=2,cex.axis=1)
+axis(side = 4,cex.axis=1)
+mtext(expression(TEP (x10^11)), side = 4, line = 3, cex=1)
+par(new = TRUE)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2/1000000000, type="l",
+     xaxt="n",yaxt="n", col = "blue",lty=1,
+     ylab = "", xlab = "",lwd=2)
+
+
+plot.new()
+legend("center", c(expression(SSB[o]),expression(SSB[s]),expression(TEP[o]-1978),expression(TEP[s]-1978),
+                     expression(TEP[o]-2018),expression(TEP[s]-2018)),
+       col = c("black","black", "blue", "blue", "red", "red"), lty = c(2,1,2,1,2,1), 
+       cex = 1.5,lwd=2,bty="n")
+dev.off()
+
 
 tiff("plots/SSB_observ-survey.tiff", width = 9, height = 5, units = 'in', res = 300)
 par(mar = c(5, 5, 3, 5))
