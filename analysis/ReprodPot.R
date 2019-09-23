@@ -32,7 +32,7 @@ lm_eqn <- function(calib.fec){
 ggplot(calib.fec,aes(x=DryW,y=eggs))+
   geom_smooth(method = "lm",colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
-  geom_text(x = 0.25, y = 1700, label = lm_eqn(calib.fec), parse = TRUE)+
+  #geom_text(x = 0.25, y = 1700, label = lm_eqn(calib.fec), parse = TRUE)+
   ylab("Number of Eggs")+xlab("Dry Weight (g)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
@@ -64,7 +64,7 @@ lm_eqn <- function(fec2){
 ggplot(fec2,aes(x=LC,y=eggs))+
   geom_smooth(method = "lm",colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
-  geom_text(x = 22, y = 1750, label = lm_eqn(fec2), parse = TRUE)+
+  #geom_text(x = 22, y = 1750, label = lm_eqn(fec2), parse = TRUE)+
   ylab("Number of Eggs")+xlab("LC (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
@@ -98,7 +98,7 @@ lm_eqn <- function(fec3){
 ggplot(fec3,aes(x=LC,y=eggs))+
   geom_smooth(method = "lm",formula= y~I(a*(x^b)), colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
-  geom_text(x = 22.5, y = 1820, label = lm_eqn(fec3), parse = TRUE)+
+  #geom_text(x = 22.5, y = 1820, label = lm_eqn(fec3), parse = TRUE)+
   ylab("Number of Eggs")+xlab("CL (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
@@ -130,7 +130,7 @@ lm_eqn <- function(fec3){
 ggplot(fec3,aes(x=LC,y=W))+
   geom_smooth(method = "lm",formula= y~I(a*(x^b)),colour="blue")+geom_point(size=2,alpha=0.6)+
   theme_bw()+
-  geom_text(x = 22.5, y = 14.3, label = lm_eqn(fec3), parse = TRUE)+
+  #geom_text(x = 22.5, y = 14.3, label = lm_eqn(fec3), parse = TRUE)+
   ylab("Weight (g)")+xlab("CL (mm)")+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
@@ -141,6 +141,7 @@ ggsave("plots/LW_def.png", width = 20, height = 12, units = "cm")
 
 #estimate proportion at size
 str(expand.explor)
+#expand.explor$Id <- as.factor(expand.explor$sfa)
 
 prop.size<-expand.explor %>%
   subset(Id == "6") %>%
@@ -227,14 +228,14 @@ str(prop.size)
 #jpeg("plots/ReprodPotential.png", width = 600, height = 350)
 tiff("plots/ReprodPotential.tiff", width = 9, height = 5, units = 'in', res = 300)
 par(mar = c(5, 5, 3, 5))
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/1000000000, type="l",
-     xlab="Year",ylab=expression(SSB (x10^9)), col = "black",lwd=2,cex.lab=1.5,cex.axis=1.5)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/10000000000, type="l",
+     xlab="Year",ylab="SSB (Million tons)", col = "black",lwd=2,cex.lab=1.5,cex.axis=1.5)#expression(SSB (x10^9))
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP/1000000000, type="l",
      xaxt="n",yaxt="n", col = "red",lty=2,
      ylab = "", xlab = "",lwd=2,cex.axis=1.5)
 axis(side = 4,cex.axis=1.5)
-mtext(expression(TEP (x10^11)), side = 4, line = 3, cex=1.5)
+mtext("TEP (Billion eggs)", side = 4, line = 3, cex=1.5)
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2/1000000000, type="l",
      xaxt="n",yaxt="n", col = "blue",lty=2,
@@ -265,31 +266,31 @@ gm<- geoMean(refpoin$TEP)
 USRtep2018<- gm*0.8
 LRPtep2018<- gm*0.3
 
-rp.18 <- ggplot(rep.pot,aes(TEP/100000000000,SSB/1000000000))+
+rp.18 <- ggplot(rep.pot,aes(TEP/1000000000,SSB/10000000000))+
   geom_point(size=2,alpha=0.5)+
   theme_bw()+
-  geom_hline(yintercept = USRssb/1000000000, colour="green")+
-  geom_hline(yintercept = LRPssb/1000000000, colour="red")+
-  geom_vline(xintercept = USRtep2018/100000000000, colour="green")+
-  geom_vline(xintercept = LRPtep2018/100000000000, colour="red")+
+  geom_hline(yintercept = USRssb/10000000000, colour="green")+
+  geom_hline(yintercept = LRPssb/10000000000, colour="red")+
+  geom_vline(xintercept = USRtep2018/1000000000, colour="green")+
+  geom_vline(xintercept = LRPtep2018/1000000000, colour="red")+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())+
-  ylab(expression("SSB "(x10^9)))+xlab(expression("TEP "(x10^11)))
+  ylab("SSB (Million tons)")+xlab("TEP (Billion eggs)")
 
 rp.18
 
 ggsave("plots/refpoint2018.png", width = 20, height = 12, units = "cm")
 
-rp.78 <- ggplot(rep.pot,aes(TEP2/100000000000,SSB/1000000000))+
+rp.78 <- ggplot(rep.pot,aes(TEP2/1000000000,SSB/10000000000))+
   geom_point(size=2,alpha=0.5)+
   theme_bw()+
-  geom_hline(yintercept = USRssb/1000000000, colour="green")+
-  geom_hline(yintercept = LRPssb/1000000000, colour="red")+
-  geom_vline(xintercept = USRtep1978/100000000000, colour="green")+
-  geom_vline(xintercept = LRPtep1978/100000000000, colour="red")+
+  geom_hline(yintercept = USRssb/10000000000, colour="green")+
+  geom_hline(yintercept = LRPssb/10000000000, colour="red")+
+  geom_vline(xintercept = USRtep1978/1000000000, colour="green")+
+  geom_vline(xintercept = LRPtep1978/1000000000, colour="red")+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())+
-  ylab(expression("SSB "(x10^9)))+xlab(expression("TEP "(x10^11)))
+  ylab("SSB (Million tons)")+xlab("TEP (Billion eggs)")
 
 rp.78
 
@@ -369,18 +370,18 @@ dev.off()
 
 tiff("plots/ReprodPotential_obser_Surv.tiff", width = 10, height = 6, units = 'in', res = 300)
 par(mar = c(5, 5, 3, 5))
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB.2/1000000000, type="l",
-     xlab="Year",ylab=expression(SSB (x10^9)), col = "black",lwd=2,cex.lab=1.5,cex.axis=1.5,lty=2)
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB.2/10000000000, type="l",
+     xlab="Year",ylab="SSB (Million tons)", col = "black",lwd=2,cex.lab=1.5,cex.axis=1.5,lty=2)
 par(new = TRUE)
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/1000000000, type="l",
-     xlab="Year",ylab=expression(SSB (x10^9)), col = "black",lwd=2,cex.lab=1.5,cex.axis=1.5,lty=1,
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/10000000000, type="l",
+     xlab="Year",ylab="SSB (Million tons)", col = "black",lwd=2,cex.lab=1.5,cex.axis=1.5,lty=1,
      xaxt="n",yaxt="n")
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP.2/1000000000, type="l",
      xaxt="n",yaxt="n", col = "red",lty=2,
      ylab = "", xlab = "",lwd=2,cex.axis=1.5)
 axis(side = 4,cex.axis=1.5)
-mtext(expression(TEP (x10^11)), side = 4, line = 3, cex=1.5)
+mtext("TEP (Billion eggs)", side = 4, line = 3, cex=1.5)
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP/1000000000, type="l",
      xaxt="n",yaxt="n", col = "red",lty=1,
@@ -404,14 +405,14 @@ dev.off()
 tiff("plots/ReprodPotential_allc.tiff", width = 10, height = 6, units = 'in', res = 300)
 par(mfrow=c(2,2),mar = c(3.5, 4, 1, 4))
 #par(mar = c(5, 5, 3, 5))
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB.2/1000000000, type="l",
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB.2/10000000000, type="l",
      ylab = "", xlab = "", col = "black",lwd=2,cex.lab=1,cex.axis=1,lty=2)
 #axis(side = 1,cex.axis=1)
 mtext("Year", side = 1, line = 2.2, cex=1)
 #axis(side = 2,cex.axis=1)
-mtext(expression(SSB (x10^9)), side = 2, line = 2, cex=1)
+mtext("SSB (Million Tons)", side = 2, line = 2, cex=1)
 par(new = TRUE)
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/1000000000, type="l",
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/10000000000, type="l",
      xlab="",ylab="", col = "black",lwd=2,cex.lab=1,cex.axis=1,lty=1,
      xaxt="n",yaxt="n")
 par(new = TRUE)
@@ -419,7 +420,7 @@ plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP.2/1000000000, type="
      xaxt="n",yaxt="n", col = "red",lty=2,
      ylab = "", xlab = "",lwd=2,cex.axis=1)
 axis(side = 4,cex.axis=1)
-mtext(expression(TEP (x10^11)), side = 4, line = 2.6, cex=1)
+mtext("TEP (Billion eggs)", side = 4, line = 2.6, cex=1)
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP/1000000000, type="l",
      xaxt="n",yaxt="n", col = "red",lty=1,
@@ -436,32 +437,32 @@ plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2/1000000000, type="l
 #par(mar = c(5, 5, 3, 5))
 
 
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB.2/1000000000, type="l",
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB.2/10000000000, type="l",
      xlab="",ylab="", col = "black",lwd=2,cex.lab=1,cex.axis=1,lty=2)
 mtext("Year", side = 1, line = 2.2, cex=1)
-mtext(expression(SSB (x10^9)), side = 2, line = 2, cex=1)
+mtext("SSB (Million Tons)", side = 2, line = 2, cex=1)
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP.2/1000000000, type="l",
      xaxt="n",yaxt="n", col = "red",lty=2,
      ylab = "", xlab = "",lwd=2,cex.axis=1)
 axis(side = 4,cex.axis=1)
-mtext(expression(TEP (x10^11)), side = 4, line = 3, cex=1)
+mtext("TEP (Billion eggs)", side = 4, line = 3, cex=1)
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2.2/1000000000, type="l",
      xaxt="n",yaxt="n", col = "blue",lty=2,
      ylab = "", xlab = "",lwd=2)
 
 
-plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/1000000000, type="l",
+plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$SSB/10000000000, type="l",
      xlab="",ylab="", col = "black",lwd=2,cex.lab=1,cex.axis=1)
 mtext("Year", side = 1, line = 2.2, cex=1)
-mtext(expression(SSB (x10^9)), side = 2, line = 2, cex=1)
+mtext("SSB (Million Tons)", side = 2, line = 2, cex=1)
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP/1000000000, type="l",
      xaxt="n",yaxt="n", col = "red",lty=1,
      ylab = "", xlab = "",lwd=2,cex.axis=1)
 axis(side = 4,cex.axis=1)
-mtext(expression(TEP (x10^11)), side = 4, line = 3, cex=1)
+mtext("TEP (Billion eggs)", side = 4, line = 3, cex=1)
 par(new = TRUE)
 plot(x=as.integer(as.character(rep.pot$year)),y=rep.pot$TEP2/1000000000, type="l",
      xaxt="n",yaxt="n", col = "blue",lty=1,
@@ -499,16 +500,16 @@ gmssb.2<- geoMean(refpoin2$SSB.2)
 USRssb.2<- gmssb.2*0.8
 LRPssb.2<- gmssb.2*0.3
 
-rp.ssb <- ggplot(rep.pot,aes(SSB/1000000000,SSB.2/1000000000))+
+rp.ssb <- ggplot(rep.pot,aes(SSB/10000000000,SSB.2/10000000000))+
   geom_point(size=2,alpha=0.5)+
   theme_bw()+
-  geom_hline(yintercept = USRssb.2/1000000000, colour="green")+
-  geom_hline(yintercept = LRPssb.2/1000000000, colour="red")+
-  geom_vline(xintercept = USRssb/1000000000, colour="green")+
-  geom_vline(xintercept = LRPssb/1000000000, colour="red")+
+  geom_hline(yintercept = USRssb.2/10000000000, colour="green")+
+  geom_hline(yintercept = LRPssb.2/10000000000, colour="red")+
+  geom_vline(xintercept = USRssb/10000000000, colour="green")+
+  geom_vline(xintercept = LRPssb/10000000000, colour="red")+
   theme(text = element_text(size=16),panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())+
-  ylab(expression("SSB"[o] (x10^9)))+xlab(expression("SSB"[s] (x10^9)))
+  ylab(expression(SSB[o]~"(Million tons)"))+xlab(expression(SSB[s]~"(Million tons)"))
 
 rp.ssb
 
@@ -564,7 +565,7 @@ ggplot(dat.fec,aes(x=LC,y=eggs))+
   geom_line(linetype = "dashed",colour="blue", size=1)+
   geom_ribbon(aes(ymin=lwr, ymax=upr, x=LC), fill = "blue", alpha = 0.3)+
   stat_function(fun=fec1974, geom="line",linetype = "dashed",colour="red", size=1)+
-  xlab("Size (mm)") + ylab("Number of eggs")+
+  xlab("CL (mm)") + ylab("Number of eggs")+
   theme_bw()+
   scale_x_continuous(expand = c(0,0))+
   theme(text = element_text(size=20),panel.grid.major = element_blank(), 
